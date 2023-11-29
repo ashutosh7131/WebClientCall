@@ -51,13 +51,4 @@ public class ApiUtil {
         }
     }
 
-    public Mono<User> callGetApi() {
-
-        return webClient.get()
-                .uri(salesLoyaltyUrl).accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(User.class);
-
-    }
-
 }

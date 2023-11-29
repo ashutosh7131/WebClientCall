@@ -6,15 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maybank.demo.DemoRestControllerSimulator.model.User;
 import com.maybank.demo.DemoRestControllerSimulator.util.ApiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.Errors;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -26,6 +24,9 @@ public class UserController {
     @Autowired
     private ApiUtil apiUtil;
 
+    @Autowired
+    private WebClient webClient;
+
     @GetMapping("/new")
     public String displayUserForm(Model model) {
 
@@ -35,13 +36,6 @@ public class UserController {
 
         return "users/new-user";
     }
-
-    /*@GetMapping("/success")
-    public String displayNothing() {
-
-        return "users/success";
-
-    }*/
 
 
     @PostMapping("/save")
@@ -65,11 +59,12 @@ public class UserController {
     }
 
     @GetMapping("/success")
-    public ResponseEntity<User> getAllUsers(){
-        Mono<User> users = apiUtil.callGetApi();
-        User user = users.block();
-        System.out.println("Mono<User> users   "  +  users);
-        System.out.println("users   "  +  user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public String getAllUsers(){
+        List<User> userList = webClient.get()
+                .uri("http://localhost:8080/api/users")
+                .retrieve()
+                .bodyToFlux(User.class).collectList().block();
+        System.out.println("List<User> userList     " +   userList);
+        return "users/success";
     }
 }
