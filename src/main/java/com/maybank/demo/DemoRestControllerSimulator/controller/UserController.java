@@ -59,12 +59,13 @@ public class UserController {
     }
 
     @GetMapping("/success")
-    public String getAllUsers(){
+    public String getAllUsers(Model model){
         List<User> userList = webClient.get()
                 .uri("http://localhost:8080/api/users")
                 .retrieve()
                 .bodyToFlux(User.class).collectList().block();
         System.out.println("List<User> userList     " +   userList);
+        model.addAttribute("list",userList);
         return "users/success";
     }
 }

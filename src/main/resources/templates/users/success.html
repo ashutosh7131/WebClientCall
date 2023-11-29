@@ -1,20 +1,17 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head></head>
-
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
 <body>
-
-<br>
-<div class="container">
-
-
-    <form>
-        <h1>Success !!!!!</h1>
-    </form>
-</div>
-
+<table>
+    <th:block th:each="element : ${list}">
+        <tr>
+            <td th:text="${element}"></td>
+        </tr>
+    </th:block>
+</table>
 </body>
-
 </html>
