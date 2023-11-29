@@ -1,0 +1,50 @@
+package com.maybank.demo.DemoRestControllerSimulator.util;
+
+import com.maybank.demo.DemoRestControllerSimulator.model.User;
+import jakarta.annotation.Resource;
+import lombok.Setter;
+import lombok.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Component
+public class ApiUtil {
+
+    @Setter
+    private WebClient webClient;
+
+    private String salesLoyaltyUrl = "http://localhost:8080/api/users";
+
+    @Autowired
+    public ApiUtil(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
+
+    public void callApi(User user) {
+        if (user == null) {
+            throw new NullPointerException("User can not be null");
+        } else {
+
+            this.webClient
+                    .post()
+                    .uri(salesLoyaltyUrl)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Mono.just(user), User.class)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .doOnSuccess(x ->{
+                        System.out.println("x.getBytes() ---> "+x) ;
+
+                    } )
+                    .doOnError(err -> {
+                        System.out.println("error");
+                    })
+                    .subscribe();
+        }
+    }
+}
+
